@@ -126,7 +126,7 @@ public class CarRequestDtoTest {
 
         CarRequestDto carRequestDto = CarRequestDto.builder()
                 .licensePlate("34ABC123")
-                .brand("")
+                .brand(" ")
                 .model("Corolla")
                 .productionYear(2023)
                 .price(BigDecimal.valueOf(500000))

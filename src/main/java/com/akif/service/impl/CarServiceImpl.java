@@ -75,6 +75,7 @@ public class CarServiceImpl implements ICarService {
 
         validateCarRequest(carRequest);
         checkLicensePlateUniqueness(carRequest.getLicensePlate());
+        checkVinNumberUniqueness(carRequest.getVinNumber());
 
         Car car = carMapper.toEntity(carRequest);
         car.setCreateTime(LocalDateTime.now());
@@ -100,6 +101,10 @@ public class CarServiceImpl implements ICarService {
 
         if (!existingCar.getLicensePlate().equals(carRequest.getLicensePlate())) {
             checkLicensePlateUniqueness(carRequest.getLicensePlate());
+        }
+        
+        if (!existingCar.getVinNumber().equals(carRequest.getVinNumber())) {
+            checkVinNumberUniqueness(carRequest.getVinNumber());
         }
 
         carMapper.updateEntity(carRequest, existingCar);
@@ -743,7 +748,13 @@ public class CarServiceImpl implements ICarService {
 
     private void checkLicensePlateUniqueness(String licensePlate) {
         if (carRepository.existsByLicensePlate(licensePlate)) {
-            throw new CarAlreadyExistsException("Car with license plate " + licensePlate + " already exists");
+            throw new CarAlreadyExistsException("Car already exists with license plate: " + licensePlate);
+        }
+    }
+
+    private void checkVinNumberUniqueness(String vinNumber) {
+        if (carRepository.existsByVinNumber(vinNumber)) {
+            throw new CarAlreadyExistsException("Car already exists with vinNumber: " + vinNumber);
         }
     }
 
