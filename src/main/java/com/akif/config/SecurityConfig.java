@@ -32,14 +32,20 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/cars", "/api/cars/{id}").permitAll()
-                .requestMatchers("/api/cars/search/**").permitAll()
-                .requestMatchers("/api/cars/statistics/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+
+                .requestMatchers("/api/cars/business/**").hasRole("ADMIN")
+
+                .requestMatchers(HttpMethod.GET, "/api/cars").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/cars/{id:\\d+}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/cars/search/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/cars/statistics/**").permitAll()
+
                 .requestMatchers(HttpMethod.POST, "/api/cars").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/cars/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/cars/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/cars/**").hasRole("ADMIN")
-                .requestMatchers("/api/cars/business/**").hasRole("ADMIN")
+
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

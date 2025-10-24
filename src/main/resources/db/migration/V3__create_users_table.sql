@@ -22,14 +22,3 @@ CREATE TABLE IF NOT EXISTS gallery.user_roles (
 CREATE INDEX IF NOT EXISTS idx_users_username ON gallery.users(username);
 CREATE INDEX IF NOT EXISTS idx_users_email ON gallery.users(email);
 CREATE INDEX IF NOT EXISTS idx_users_enabled ON gallery.users(enabled);
-
-INSERT INTO gallery.users (username, email, password, enabled, created_by) VALUES 
-('admin', 'admin@cargallery.com', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDi', TRUE, 'system'),
-('user', 'user@cargallery.com', '$2a$10$8K1p/a0dL1L0z8j8K1p/a0dL1L0z8j8K1p/a0dL1L0z8j8K1p/a0dL1L0z8j', TRUE, 'system')
-ON CONFLICT (username) DO NOTHING;
-
-INSERT INTO gallery.user_roles (user_id, role) VALUES 
-((SELECT id FROM gallery.users WHERE username = 'admin'), 'ADMIN'),
-((SELECT id FROM gallery.users WHERE username = 'admin'), 'USER'),
-((SELECT id FROM gallery.users WHERE username = 'user'), 'USER')
-ON CONFLICT (user_id, role) DO NOTHING;
