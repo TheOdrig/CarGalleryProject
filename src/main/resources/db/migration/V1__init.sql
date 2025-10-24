@@ -1,6 +1,6 @@
 CREATE SCHEMA IF NOT EXISTS gallery;
 
-CREATE TABLE gallery.car (
+CREATE TABLE IF NOT EXISTS gallery.car (
 
     id BIGSERIAL PRIMARY KEY,
 
@@ -49,12 +49,19 @@ CREATE TABLE gallery.car (
     updated_by VARCHAR(100)
 );
 
-ALTER TABLE gallery.car ADD CONSTRAINT uk_car_license_plate UNIQUE (license_plate);
-ALTER TABLE gallery.car ADD CONSTRAINT uk_car_vin UNIQUE (vin_number);
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'uk_car_license_plate') THEN
+        ALTER TABLE gallery.car ADD CONSTRAINT uk_car_license_plate UNIQUE (license_plate);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'uk_car_vin') THEN
+        ALTER TABLE gallery.car ADD CONSTRAINT uk_car_vin UNIQUE (vin_number);
+    END IF;
+END $$;
 
-CREATE INDEX idx_car_brand ON gallery.car(brand);
-CREATE INDEX idx_car_status ON gallery.car(car_status_type);
-CREATE INDEX idx_car_price ON gallery.car(price);
-CREATE INDEX index_car_year ON gallery.car(production_year);
-CREATE INDEX index_car_create_time ON gallery.car(create_time);
+CREATE INDEX IF NOT EXISTS idx_car_brand ON gallery.car(brand);
+CREATE INDEX IF NOT EXISTS idx_car_status ON gallery.car(car_status_type);
+CREATE INDEX IF NOT EXISTS idx_car_price ON gallery.car(price);
+CREATE INDEX IF NOT EXISTS index_car_year ON gallery.car(production_year);
+CREATE INDEX IF NOT EXISTS index_car_create_time ON gallery.car(create_time);
 

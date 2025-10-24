@@ -114,6 +114,24 @@ public class GlobalExceptionHandler {
                 HttpStatus.FORBIDDEN, request);
     }
 
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponseDto> handleUserAlreadyExistsException(UserAlreadyExistsException ex, WebRequest request) {
+        log.error("User already exists: {}", ex.getMessage());
+        return buildErrorResponse(ex.getErrorCode(), ex.getErrorMessage(), ex.getHttpStatus(), request);
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidTokenException(InvalidTokenException ex, WebRequest request) {
+        log.error("Invalid token: {}", ex.getMessage());
+        return buildErrorResponse(ex.getErrorCode(), ex.getErrorMessage(), ex.getHttpStatus(), request);
+    }
+
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<ErrorResponseDto> handleTokenExpiredException(TokenExpiredException ex, WebRequest request) {
+        log.error("Token expired: {}", ex.getMessage());
+        return buildErrorResponse(ex.getErrorCode(), ex.getErrorMessage(), ex.getHttpStatus(), request);
+    }
+
 
 
     @ExceptionHandler(ConstraintViolationException.class)

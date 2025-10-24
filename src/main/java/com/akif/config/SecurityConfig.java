@@ -1,42 +1,54 @@
 package com.akif.config;
 
+import com.akif.security.JwtAuthenticationFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
-    
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/cars", "/api/cars/{id}").permitAll()
-                .requestMatchers("/api/cars/search/**").permitAll()
-                .requestMatchers("/api/cars/statistics/**").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+
+                .requestMatchers("/api/cars/business/**").hasRole("ADMIN")
+
+                .requestMatchers(HttpMethod.GET, "/api/cars").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/cars/{id:\\d+}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/cars/search/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/cars/statistics/**").permitAll()
+
                 .requestMatchers(HttpMethod.POST, "/api/cars").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/cars/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/cars/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/cars/**").hasRole("ADMIN")
-                .requestMatchers("/api/cars/business/**").hasRole("ADMIN")
+
                 .anyRequest().authenticated()
             )
-            .httpBasic(Customizer.withDefaults());
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         
         return http.build();
     }
@@ -45,21 +57,10 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
+
+
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails admin = User.builder()
-            .username("admin")
-            .password(passwordEncoder.encode("admin123"))
-            .roles("ADMIN")
-            .build();
-            
-        UserDetails user = User.builder()
-            .username("user")
-            .password(passwordEncoder.encode("user123"))
-            .roles("USER")
-            .build();
-            
-        return new InMemoryUserDetailsManager(admin, user);
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 }
