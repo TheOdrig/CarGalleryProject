@@ -20,7 +20,7 @@ public class ErrorResponseDto {
     private String errorCode;
     private String message;
 
-    @JsonFormat(pattern = "dd-MM-yyyy'T'HH:mm:ss.SSS")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
     private LocalDateTime timestamp;
 
     private Integer status;

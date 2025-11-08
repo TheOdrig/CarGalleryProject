@@ -15,6 +15,8 @@ import java.util.UUID;
 @Profile("!prod")
 public class StubPaymentGateway implements IPaymentGateway {
 
+    private static final long API_SIMULATION_DELAY_MS = 100;
+
     @Override
     public PaymentResult authorize(BigDecimal amount, CurrencyType currency, String customerId) {
         log.info("🔒 [STUB] Authorizing payment: {} {}, customerId: {}", amount, currency, customerId);
@@ -50,7 +52,7 @@ public class StubPaymentGateway implements IPaymentGateway {
 
     private void simulateApiCall() {
         try {
-            Thread.sleep(100);
+            Thread.sleep(API_SIMULATION_DELAY_MS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.warn("API call simulation interrupted");

@@ -97,21 +97,21 @@ public class CarRequestDto implements Serializable {
     @Max(value = 9, message = "Number of seats cannot exceed 9")
     private Integer seats;
 
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @PastOrPresent(message = "Registration date cannot be in the future")
     private LocalDate registrationDate;
 
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @PastOrPresent(message = "Last service date cannot be in the future")
     private LocalDate lastServiceDate;
 
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate nextServiceDate;
 
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate insuranceExpiryDate;
 
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate inspectionExpiryDate;
 
     @Size(max = 1000, message = "Notes cannot exceed 1000 characters")

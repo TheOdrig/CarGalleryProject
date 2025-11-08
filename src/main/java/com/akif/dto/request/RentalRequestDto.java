@@ -21,12 +21,12 @@ public class RentalRequestDto implements Serializable {
     private Long carId;
 
     @NotNull(message = "Start date cannot be null")
-    @JsonFormat(pattern = "dd-MM-yyyy")
-    @Future(message = "Start date must be in the future")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @FutureOrPresent(message = "Start date must be today or in the future")
     private LocalDate startDate;
 
     @NotNull(message = "End date cannot be null")
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Future(message = "End date must be in the future")
     private LocalDate endDate;
 

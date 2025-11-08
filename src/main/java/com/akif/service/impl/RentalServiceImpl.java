@@ -35,6 +35,8 @@ import java.time.temporal.ChronoUnit;
 @Transactional(readOnly = true)
 public class RentalServiceImpl implements IRentalService {
 
+    private static final String STUB_PAYMENT_METHOD = "STUB_GATEWAY";
+
     private final RentalRepository rentalRepository;
     private final CarRepository carRepository;
     private final UserRepository userRepository;
@@ -148,7 +150,7 @@ public class RentalServiceImpl implements IRentalService {
                 .currency(rental.getCurrency())
                 .status(PaymentStatus.AUTHORIZED)
                 .transactionId(authResult.transactionId())
-                .paymentMethod("DEFAULT")
+                .paymentMethod(STUB_PAYMENT_METHOD)
                 .gatewayResponse(authResult.message())
                 .build();
 
